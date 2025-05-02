@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Кликер</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            background-color: #8bff67; 
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #clicker {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 50%;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: none; 
+            transition: transform 0.1s;
+        }
+
+        #clicker:active {
+            transform: scale(0.95);
+        }
+
+        .stats {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .stats p {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        h1 {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>ЛАЙМЕР</h1>
+
+    <div id="clicker" onclick="increment()"></div>
+
+    <div class="stats">
+        <p>ЛАЙМЫ: <span id="clicks">{{ clicks }}</span></p>
+    </div>
+
+    <script>
+        const gameState = {
+            clicks: parseInt("{{ clicks }}"),
+            userId: parseInt("{{ user_id }}")
+        };
+
+        function increment() {
+            gameState.clicks++;
+            document.getElementById('clicks').textContent = gameState.clicks;
+            saveProgress();
+        }
+
+        function saveProgress() {
+            fetch('/save_score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: gameState.userId,
+                    clicks: gameState.clicks,
+                })
+            });
+        }
+
+        Telegram.WebApp.expand();
+        Telegram.WebApp.ready();
+    </script>
+</body>
+</html>
